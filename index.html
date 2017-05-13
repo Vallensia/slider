@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Slider - простой слайдер изображений.</title>
+    <link rel="stylesheet" href="slider.css"/>
+    <script type="text/javascript" src="slider.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 960px;
+            margin: 2em auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Slider - простой слайдер изображений</h1>
+    <h2>Первый слайдер</h2>
+    <figure class="slider">
+        <img src="img/beach.jpg" alt="Картинка с пляжем"/>
+        <img src="img/mount.jpg" alt="Картинка с горами"/>
+        <img src="img/park.jpg" alt="Картинка с пляжем"/>
+        <img src="img/pond.jpg" alt="Картинка с прудом"/>
+    </figure>
+</div>
+<script>
+    slider(document.getElementsByClassName('slider'), {
+        delay: 2000
+    });
+</script>
+</body>
+</html>
