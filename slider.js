@@ -22,13 +22,8 @@ class Slider {
 
         const leftArrow = createElement('li', '.slider__arrow_left');
         const rightArrow = createElement('li', '.slider__arrow_right');
-
         this.sliderArrows.appendChild(leftArrow);
         this.sliderArrows.appendChild(rightArrow);
-
-        sliderElement.appendChild(this.sliderArrows);
-        rightArrow.addEventListener('click', this.selectNextSlide, false);
-        leftArrow.addEventListener('click', this.selectPrevSlide, false);
 
         for (let childIndex = 0; childIndex < sliderElement.children.length; childIndex++) {
             this.slides.push(sliderElement.children[childIndex]);
@@ -53,9 +48,13 @@ class Slider {
             this.initInterval();
             const sliderNavigationItemPause = createElement('li', '.slider__navigation-item__pause__stop');
             this.sliderNavigation.appendChild(sliderNavigationItemPause);
+            sliderElement.appendChild(this.sliderArrows);
             sliderNavigationItemPause.addEventListener('click', this.handleSliderNavigationPause, false);
+            rightArrow.addEventListener('click', this.selectNextSlide, false);
+            leftArrow.addEventListener('click', this.selectPrevSlide, false);
             sliderElement.addEventListener('mouseover', this.stopOnMouseEnter, false);
             sliderElement.addEventListener('mouseout', this.playOnMouseOut, false);
+            console.log(sliderElement);
         }
 
         this.sliderNavigation.children[this.currentSlide].setAttribute('class', 'slider__navigation-item_current');
