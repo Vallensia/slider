@@ -9,7 +9,7 @@ class Slider {
         this.delay = config.delay;
         this.autoPlay = config.autoPlay;
         this.currentSlide = 0;
-        this.currentInterval = config;
+        this.currentInterval;
         this.slides = [];
         this.sliderNavigation = createElement('ul', '.slider__navigation');
         this.sliderArrows = createElement('ul', '.slider__arrows');
@@ -40,14 +40,14 @@ class Slider {
         }
 
         for (let index = 0; index < this.slides.length; index++) {
-            let sliderNavigationItem = createElement('li', '.slider__navigation-item');
+            const sliderNavigationItem = createElement('li', '.slider__navigation-item');
             sliderNavigationItem.setAttribute('data-count', index.toString());
             this.sliderNavigation.appendChild(sliderNavigationItem);
         }
 
         if (this.autoPlay) {
             this.initInterval();
-            let sliderNavigationItemPause = createElement('li', '.slider__navigation-item__pause__stop');
+            const sliderNavigationItemPause = createElement('li', '.slider__navigation-item__pause__stop');
             this.sliderNavigation.appendChild(sliderNavigationItemPause);
             sliderElement.appendChild(this.sliderArrows);
             sliderNavigationItemPause.addEventListener('click', this.handleSliderNavigationPause, false);
@@ -134,7 +134,7 @@ class Slider {
         }
     }
 
-    playOnMouseOut() {
+    playOnMouseOut(event) {
         const element = event.target;
 
         if (element.className === 'slider__item__current') {
