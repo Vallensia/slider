@@ -19,6 +19,8 @@ class Slider {
         this.selectNextSlide = this.selectNextSlide.bind(this);
         this.selectPrevSlide = this.selectPrevSlide.bind(this);
         this.handleSliderNavigationPause = this.handleSliderNavigationPause.bind(this);
+        this.stopOnMouseEnter = this.stopOnMouseEnter.bind(this);
+        this.playOnMouseOut = this.playOnMouseOut.bind(this);
 
         const leftArrow = Slider.createElement('li', '.slider__arrow_left');
         const rightArrow = Slider.createElement('li', '.slider__arrow_right');
@@ -52,8 +54,9 @@ class Slider {
             sliderNavigationItemPause.addEventListener('click', this.handleSliderNavigationPause, false);
             rightArrow.addEventListener('click', this.selectNextSlide, false);
             leftArrow.addEventListener('click', this.selectPrevSlide, false);
+            this.slides[this.currentSlide].addEventListener('mouseover', this.stopOnMouseEnter, false);
+            this.slides[this.currentSlide].addEventListener('mouseout', this.playOnMouseOut, false);
         }
-
 
         this.sliderNavigation.children[this.currentSlide].setAttribute('class', 'slider__navigation-item_current');
         sliderElement.insertBefore(this.sliderNavigation, sliderElement.firstChild);
@@ -71,6 +74,7 @@ class Slider {
 
             this.changeCurrentSlide(selectedId);
             this.nextSlide = parseInt(this.currentSlide) + 1;
+
             if (this.autoPlay && this.playbackState === PLAYBACK_STATE.PLAY) {
                 this.initInterval();
             }
@@ -103,9 +107,13 @@ class Slider {
         this.slides[this.currentSlide].setAttribute('class', 'slider__item');
         this.slides[nextSlide].setAttribute('class', 'slider__item__current');
         this.currentSlide = nextSlide;
+
         for (let slide = 0; slide < this.slides.length; slide++) {
             this.slides[slide].style.left = `${960 * (slide - this.currentSlide)}px`;
         }
+
+        this.slides[this.currentSlide].addEventListener('mouseover', this.stopOnMouseEnter, false);
+        this.slides[this.currentSlide].addEventListener('mouseout', this.playOnMouseOut, false);
     }
 
     transitionNextSlide() {
@@ -128,6 +136,18 @@ class Slider {
         } else {
             element.setAttribute('class', 'slider__navigation-item__pause__stop');
             this.playbackState = PLAYBACK_STATE.PLAY;
+            this.initInterval();
+        }
+    }
+
+    stopOnMouseEnter() {
+        if (this.autoPlay && this.playbackState === PLAYBACK_STATE.PLAY) {
+            clearInterval(this.currentInterval);
+        }
+    }
+
+    playOnMouseOut() {
+        if (this.autoPlay && this.playbackState === PLAYBACK_STATE.PLAY) {
             this.initInterval();
         }
     }
