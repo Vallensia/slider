@@ -54,7 +54,6 @@ class Slider {
             leftArrow.addEventListener('click', this.selectPrevSlide, false);
             sliderElement.addEventListener('mouseover', this.stopOnMouseEnter, false);
             sliderElement.addEventListener('mouseout', this.playOnMouseOut, false);
-            console.log(sliderElement);
         }
 
         this.sliderNavigation.children[this.currentSlide].setAttribute('class', 'slider__navigation-item_current');
