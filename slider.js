@@ -9,11 +9,10 @@ class Slider {
         this.delay = config.delay;
         this.autoPlay = config.autoPlay;
         this.currentSlide = 0;
-        this.nextSlide = 1;
         this.currentInterval = config;
         this.slides = [];
-        this.sliderNavigation = Slider.createElement('ul', '.slider__navigation');
-        this.sliderArrows = Slider.createElement('ul', '.slider__arrows');
+        this.sliderNavigation = createElement('ul', '.slider__navigation');
+        this.sliderArrows = createElement('ul', '.slider__arrows');
 
         this.handleSlideNavigationClick = this.handleSlideNavigationClick.bind(this);
         this.selectNextSlide = this.selectNextSlide.bind(this);
@@ -22,8 +21,8 @@ class Slider {
         this.stopOnMouseEnter = this.stopOnMouseEnter.bind(this);
         this.playOnMouseOut = this.playOnMouseOut.bind(this);
 
-        const leftArrow = Slider.createElement('li', '.slider__arrow_left');
-        const rightArrow = Slider.createElement('li', '.slider__arrow_right');
+        const leftArrow = createElement('li', '.slider__arrow_left');
+        const rightArrow = createElement('li', '.slider__arrow_right');
         this.sliderArrows.appendChild(leftArrow);
         this.sliderArrows.appendChild(rightArrow);
 
@@ -41,21 +40,22 @@ class Slider {
         }
 
         for (let index = 0; index < this.slides.length; index++) {
-            let sliderNavigationItem = Slider.createElement('li', '.slider__navigation-item');
+            let sliderNavigationItem = createElement('li', '.slider__navigation-item');
             sliderNavigationItem.setAttribute('data-count', index.toString());
             this.sliderNavigation.appendChild(sliderNavigationItem);
         }
 
         if (this.autoPlay) {
             this.initInterval();
-            let sliderNavigationItemPause = Slider.createElement('li', '.slider__navigation-item__pause__stop');
+            let sliderNavigationItemPause = createElement('li', '.slider__navigation-item__pause__stop');
             this.sliderNavigation.appendChild(sliderNavigationItemPause);
             sliderElement.appendChild(this.sliderArrows);
             sliderNavigationItemPause.addEventListener('click', this.handleSliderNavigationPause, false);
             rightArrow.addEventListener('click', this.selectNextSlide, false);
             leftArrow.addEventListener('click', this.selectPrevSlide, false);
-            this.slides[this.currentSlide].addEventListener('mouseover', this.stopOnMouseEnter, false);
-            this.slides[this.currentSlide].addEventListener('mouseout', this.playOnMouseOut, false);
+            sliderElement.addEventListener('mouseover', this.stopOnMouseEnter, false);
+            sliderElement.addEventListener('mouseout', this.playOnMouseOut, false);
+            console.log(sliderElement);
         }
 
         this.sliderNavigation.children[this.currentSlide].setAttribute('class', 'slider__navigation-item_current');
@@ -73,7 +73,6 @@ class Slider {
             clearInterval(this.currentInterval);
 
             this.changeCurrentSlide(selectedId);
-            this.nextSlide = parseInt(this.currentSlide) + 1;
 
             if (this.autoPlay && this.playbackState === PLAYBACK_STATE.PLAY) {
                 this.initInterval();
@@ -111,19 +110,6 @@ class Slider {
         for (let slide = 0; slide < this.slides.length; slide++) {
             this.slides[slide].style.left = `${960 * (slide - this.currentSlide)}px`;
         }
-
-        this.slides[this.currentSlide].addEventListener('mouseover', this.stopOnMouseEnter, false);
-        this.slides[this.currentSlide].addEventListener('mouseout', this.playOnMouseOut, false);
-    }
-
-    transitionNextSlide() {
-
-        let nextSlide = parseInt(this.currentSlide) + 1;
-
-        if (nextSlide === this.slides.length) {
-            nextSlide = 0;
-        }
-
     }
 
     handleSliderNavigationPause(event) {
@@ -140,14 +126,18 @@ class Slider {
         }
     }
 
-    stopOnMouseEnter() {
-        if (this.autoPlay && this.playbackState === PLAYBACK_STATE.PLAY) {
+    stopOnMouseEnter(event) {
+        const element = event.target;
+
+        if (element.className === 'slider__item__current') {
             clearInterval(this.currentInterval);
         }
     }
 
     playOnMouseOut() {
-        if (this.autoPlay && this.playbackState === PLAYBACK_STATE.PLAY) {
+        const element = event.target;
+
+        if (element.className === 'slider__item__current') {
             this.initInterval();
         }
     }
@@ -155,15 +145,14 @@ class Slider {
     initInterval() {
         this.currentInterval = setInterval(this.selectNextSlide, this.delay);
     }
+}
 
-    static createElement(element, name) {
-        const
-            unit = document.createElement(element),
-            attr = 'class';
+function createElement(element, name) {
+    const
+        unit = document.createElement(element),
+        attr = 'class';
 
-        unit.setAttribute(attr, name.substr(1));
+    unit.setAttribute(attr, name.substr(1));
 
-        return unit;
-    }
-
+    return unit;
 }
