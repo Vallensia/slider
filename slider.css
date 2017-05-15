@@ -9,7 +9,8 @@
     overflow: hidden;
 }
 
-.slider__item {
+.slider__item,
+.slider__item__current {
     margin-top: 20px;
     width: 100%;
     transition-property: left;
@@ -18,7 +19,7 @@
     position: absolute;
 }
 
-.slider__item.current {
+.slider__item__current {
     transition-property: left;
     transition-duration: 1s;
     transition-timing-function: linear;
@@ -102,15 +103,18 @@
     display: inline-block;
     color: #383eba;
 }
+
 .slider__arrow_left::before {
     content: "\25C0";
 }
+
 .slider__arrow_right {
     cursor: pointer;
     list-style-type: none;
     display: inline-block;
     color: #383eba;
 }
+
 .slider__arrow_right::before {
     content: "\25b6";
 }

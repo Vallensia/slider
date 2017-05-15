@@ -35,7 +35,10 @@
     let els = document.getElementsByClassName("slider");
 
     Array.prototype.forEach.call(els, function(el) {
-        new Slider(el);
+        new Slider(el, {
+            delay: 3000,
+            autoPlay: true
+        });
     });
 
 </script>

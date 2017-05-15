@@ -6,20 +6,22 @@ const PLAYBACK_STATE = {
 class Slider {
     constructor(sliderElement, config) {
         this.playbackState = PLAYBACK_STATE.PLAY;
+        this.delay = config.delay;
+        this.autoPlay = config.autoPlay;
         this.currentSlide = 0;
         this.nextSlide = 1;
         this.currentInterval = config;
         this.slides = [];
-        this.sliderNavigation = this.createElement('ul', '.slider__navigation');
-        this.sliderArrows = this.createElement('ul', '.slider__arrows');
+        this.sliderNavigation = Slider.createElement('ul', '.slider__navigation');
+        this.sliderArrows = Slider.createElement('ul', '.slider__arrows');
 
         this.handleSlideNavigationClick = this.handleSlideNavigationClick.bind(this);
         this.selectNextSlide = this.selectNextSlide.bind(this);
         this.selectPrevSlide = this.selectPrevSlide.bind(this);
         this.handleSliderNavigationPause = this.handleSliderNavigationPause.bind(this);
 
-        const leftArrow = this.createElement('li', '.slider__arrow_left');
-        const rightArrow = this.createElement('li', '.slider__arrow_right');
+        const leftArrow = Slider.createElement('li', '.slider__arrow_left');
+        const rightArrow = Slider.createElement('li', '.slider__arrow_right');
         this.sliderArrows.appendChild(leftArrow);
         this.sliderArrows.appendChild(rightArrow);
 
@@ -28,7 +30,7 @@ class Slider {
             this.slides[childIndex].setAttribute('data-count', childIndex.toString());
         }
 
-        this.slides[0].setAttribute('class', 'slider__item current');
+        this.slides[0].setAttribute('class', 'slider__item__current');
         this.slides[0].style.left = `0px`;
 
         for (let slide = 1; slide < this.slides.length; slide++) {
@@ -37,24 +39,26 @@ class Slider {
         }
 
         for (let index = 0; index < this.slides.length; index++) {
-            let sliderNavigationItem = this.createElement('li', '.slider__navigation-item');
+            let sliderNavigationItem = Slider.createElement('li', '.slider__navigation-item');
             sliderNavigationItem.setAttribute('data-count', index.toString());
             this.sliderNavigation.appendChild(sliderNavigationItem);
         }
 
-        let sliderNavigationItemPause = this.createElement('li', '.slider__navigation-item__pause__stop');
-        this.sliderNavigation.appendChild(sliderNavigationItemPause);
+        if (this.autoPlay) {
+            this.initInterval();
+            let sliderNavigationItemPause = Slider.createElement('li', '.slider__navigation-item__pause__stop');
+            this.sliderNavigation.appendChild(sliderNavigationItemPause);
+            sliderElement.appendChild(this.sliderArrows);
+            sliderNavigationItemPause.addEventListener('click', this.handleSliderNavigationPause, false);
+            rightArrow.addEventListener('click', this.selectNextSlide, false);
+            leftArrow.addEventListener('click', this.selectPrevSlide, false);
+        }
+
 
         this.sliderNavigation.children[this.currentSlide].setAttribute('class', 'slider__navigation-item_current');
         sliderElement.insertBefore(this.sliderNavigation, sliderElement.firstChild);
-        sliderElement.appendChild(this.sliderArrows);
-
-        this.initInterval();
 
         this.sliderNavigation.addEventListener('click', this.handleSlideNavigationClick, false);
-        sliderNavigationItemPause.addEventListener('click', this.handleSliderNavigationPause, false);
-        rightArrow.addEventListener('click', this.selectNextSlide, false);
-        leftArrow.addEventListener('click', this.selectPrevSlide, false);
     }
 
     handleSlideNavigationClick(event) {
@@ -65,51 +69,40 @@ class Slider {
         if (selectedId) {
             clearInterval(this.currentInterval);
 
-            this.sliderNavigation.children[this.currentSlide].setAttribute('class', 'slider__navigation-item');
-            element.setAttribute('class', 'slider__navigation-item_current');
-            this.slides[this.currentSlide].setAttribute('class', 'slider__item');
-            this.slides[selectedId].setAttribute('class', 'slider__item current');
-            this.currentSlide = selectedId;
+            this.changeCurrentSlide(selectedId);
             this.nextSlide = parseInt(this.currentSlide) + 1;
-            for (let slide = 0; slide < this.slides.length; slide++) {
-                this.slides[slide].style.left = `${960 * (slide - this.currentSlide)}px`;
-            }
-
-            if (this.playbackState === PLAYBACK_STATE.PLAY) {
+            if (this.autoPlay && this.playbackState === PLAYBACK_STATE.PLAY) {
                 this.initInterval();
             }
         }
     }
 
     selectNextSlide() {
-        let nextImage = parseInt(this.currentSlide) + 1;
+        let nextSlide = parseInt(this.currentSlide) + 1;
 
-        if (nextImage === this.slides.length) {
-            nextImage = 0;
+        if (nextSlide === this.slides.length) {
+            nextSlide = 0;
         }
 
-        this.sliderNavigation.children[this.currentSlide].setAttribute('class', 'slider__navigation-item');
-        this.sliderNavigation.children[nextImage].setAttribute('class', 'slider__navigation-item_current');
-        this.slides[this.currentSlide].setAttribute('class', 'slider__item');
-        this.slides[nextImage].setAttribute('class', 'slider__item current');
-        this.currentSlide = nextImage;
-        for (let slide = 0; slide < this.slides.length; slide++) {
-            this.slides[slide].style.left = `${960 * (slide - this.currentSlide)}px`;
-        }
+        this.changeCurrentSlide(nextSlide);
     }
 
     selectPrevSlide() {
-        let nextImage = parseInt(this.currentSlide) - 1;
+        let nextSlide = parseInt(this.currentSlide) - 1;
 
         if (this.currentSlide === 0) {
-            nextImage = this.slides.length - 1;
+            nextSlide = this.slides.length - 1;
         }
 
+        this.changeCurrentSlide(nextSlide);
+    }
+
+    changeCurrentSlide(nextSlide) {
         this.sliderNavigation.children[this.currentSlide].setAttribute('class', 'slider__navigation-item');
-        this.sliderNavigation.children[nextImage].setAttribute('class', 'slider__navigation-item_current');
+        this.sliderNavigation.children[nextSlide].setAttribute('class', 'slider__navigation-item_current');
         this.slides[this.currentSlide].setAttribute('class', 'slider__item');
-        this.slides[nextImage].setAttribute('class', 'slider__item current');
-        this.currentSlide = nextImage;
+        this.slides[nextSlide].setAttribute('class', 'slider__item__current');
+        this.currentSlide = nextSlide;
         for (let slide = 0; slide < this.slides.length; slide++) {
             this.slides[slide].style.left = `${960 * (slide - this.currentSlide)}px`;
         }
@@ -117,10 +110,10 @@ class Slider {
 
     transitionNextSlide() {
 
-        let nextImage = parseInt(this.currentSlide) + 1;
+        let nextSlide = parseInt(this.currentSlide) + 1;
 
-        if (nextImage === this.slides.length) {
-            nextImage = 0;
+        if (nextSlide === this.slides.length) {
+            nextSlide = 0;
         }
 
     }
@@ -140,10 +133,10 @@ class Slider {
     }
 
     initInterval() {
-        this.currentInterval = setInterval(this.selectNextSlide, 3000);
+        this.currentInterval = setInterval(this.selectNextSlide, this.delay);
     }
 
-    createElement(element, name) {
+    static createElement(element, name) {
         const
             unit = document.createElement(element),
             attr = 'class';
