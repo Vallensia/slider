@@ -9,7 +9,6 @@ class Slider {
         this.delay = config.delay;
         this.autoPlay = config.autoPlay;
         this.currentSlide = 0;
-        this.currentInterval;
         this.slides = [];
         this.sliderNavigation = createElement('ul', '.slider__navigation');
         this.sliderArrows = createElement('ul', '.slider__arrows');
